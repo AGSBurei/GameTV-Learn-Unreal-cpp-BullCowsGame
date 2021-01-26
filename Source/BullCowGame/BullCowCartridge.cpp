@@ -7,13 +7,13 @@ void UBullCowCartridge::BeginPlay() // When the game starts
     Super::BeginPlay();
     const FString WordListPath = FPaths::ProjectContentDir() / TEXT("WordLists/WordList.txt");
     FFileHelper::LoadFileToStringArray(Words, *WordListPath);
-    
+
+    //GetValidWords(Words);
     SetupGame();
-    PrintLine(TEXT("The number of possible words is %i"), Words.Num());
-    for (int32 i = 0; i<5; i++)
-    {
-        PrintLine(TEXT("%s"), *Words[i]);
-    }
+    
+    PrintLine(TEXT("The number of word is: %i."), Words.Num());
+    PrintLine(TEXT("The number of possible words is: %i."), GetValidWords(Words).Num());
+    PrintLine(TEXT("The HiddenWord is: %s."), *HiddenWord);
 }
 
 void UBullCowCartridge::OnInput(const FString& Input) // When the player hits enter
@@ -73,6 +73,39 @@ void UBullCowCartridge::ProcessGuess(const FString Guess, int32 Counter)
     }
     LoseLife();
 }
+TArray<FString> UBullCowCartridge::GetValidWords( TArray<FString> WordList) const
+{
+    TArray<FString> ValidWords;
+    for (FString AWord : WordList)
+    {
+        if(AWord.Len() >= 4 && AWord.Len() <= 8 && IsIsogram(AWord))
+        {
+            ValidWords.Emplace(AWord);
+        }
+    }
+    return ValidWords;
+}
+
+bool UBullCowCartridge::IsIsogram(FString Word) const
+{
+    for(int32 i = 0; i < Word.Len(); i++)
+    {
+        for(int32 Comparison = i + 1; Comparison < Word.Len(); Comparison++)
+        {
+            if(Word[i] == Word[Comparison])
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+    //for(int32 i = 0; i < Word.Len(); i++)
+    //{
+    //    PrintLine(TEXT("%c"),Word[i]);
+       
+    //}
+    
+}
 
 void UBullCowCartridge::CheckLife()
 {
@@ -95,24 +128,4 @@ void UBullCowCartridge::EndGame()
     bGameOver = true;
     ClearScreen();
     PrintLine(TEXT("\nPress enter to play again"));
-}
-bool UBullCowCartridge::IsIsogram(FString Word) const
-{
-    for(int32 i = 0; i < Word.Len(); i++)
-    {
-        for(int32 Comparison = i + 1; Comparison < Word.Len(); Comparison++)
-        {
-            if(Word[i] == Word[Comparison])
-            {
-                return false;
-            }
-        }
-    }
-    return true;
-   //for(int32 i = 0; i < Word.Len(); i++)
-   //{
-   //    PrintLine(TEXT("%c"),Word[i]);
-       
-   //}
-    
 }

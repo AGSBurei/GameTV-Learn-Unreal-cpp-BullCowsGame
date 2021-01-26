@@ -21,6 +21,7 @@ class BULLCOWGAME_API UBullCowCartridge : public UCartridge
 	void CheckLife();
 	bool IsIsogram(FString Word) const;
 	TArray<FString> Words;
+	TArray<FString> GetValidWords(TArray<FString> WordList) const;
 
 	// Your declarations go below!
 	private:
